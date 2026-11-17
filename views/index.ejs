@@ -60,9 +60,26 @@
         <% }); %>
       </ul>
     </section>
+
+    <!-- Chat UI terintegrasi -->
+    <section class="max-w-5xl mx-auto px-6 pb-20">
+      <h2 class="text-2xl font-extrabold tracking-tight text-amber-900 mb-4">Tanya Asisten AI</h2>
+      <div class="chat-container bg-white p-4 rounded-lg shadow-md border border-amber-200">
+        <div id="chat-box" style="height: 300px; overflow-y: scroll; border: 1px solid #e5e7eb; padding: 15px; margin-bottom: 10px; border-radius: 8px; background-color: #f9fafb;">
+            <!-- Pesan akan muncul di sini -->
+            <div style="margin-bottom: 8px;"><strong>AI:</strong> Halo! Ada yang ingin ditanyakan seputar produk Pawon Risra?</div>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <input type="text" id="chat-input" placeholder="Tanya tentang keripik atau kacang..." class="form-control" style="flex: 1; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;" />
+            <button id="send-btn" class="btn btn-primary" style="background-color: #b45309; color: white; padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Kirim</button>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <script>
+    // Logika API Status bawaan dari kodemu
     (async function () {
       const output = document.getElementById('status-output');
       const label = document.getElementById('status-label');
@@ -79,6 +96,72 @@
         label.textContent = 'Tidak terhubung';
       }
     })();
+
+    // Logika Integrasi Gemini AI
+    document.addEventListener('DOMContentLoaded', () => {
+      const chatBox = document.getElementById('chat-box');
+      const chatInput = document.getElementById('chat-input');
+      const sendBtn = document.getElementById('send-btn');
+
+      // Fungsi untuk menambahkan pesan ke layar
+      const appendMessage = (sender, text) => {
+        const msgElement = document.createElement('div');
+        msgElement.innerHTML = `<strong>${sender}:</strong> ${text}`;
+        msgElement.style.marginBottom = '8px';
+        msgElement.style.padding = '8px';
+        msgElement.style.backgroundColor = sender === 'Kamu' ? '#fef3c7' : '#ffffff';
+        msgElement.style.borderRadius = '6px';
+        msgElement.style.border = '1px solid #e5e7eb';
+        chatBox.appendChild(msgElement);
+        chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll ke bawah
+        return msgElement;
+      };
+
+      // Fungsi saat tombol kirim ditekan
+      sendBtn.addEventListener('click', async () => {
+        const message = chatInput.value.trim();
+        if (!message) return;
+
+        // Tampilkan pertanyaan user
+        appendMessage('Kamu', message);
+        chatInput.value = '';
+        sendBtn.disabled = true;
+        sendBtn.style.opacity = '0.5';
+
+        // Tampilkan indikator loading
+        const loadingMsg = appendMessage('AI', '<em>Sedang berpikir...</em>');
+
+        try {
+          // Kirim request ke backend endpoint /api/chat
+          const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message })
+          });
+          
+          const result = await response.json();
+          
+          // Tampilkan balasan AI
+          if (result.success) {
+            loadingMsg.innerHTML = `<strong>AI:</strong> ${result.data.reply}`;
+          } else {
+            loadingMsg.innerHTML = `<strong>AI (Error):</strong> <span style="color: red;">${result.message}</span>`;
+          }
+        } catch (error) {
+          loadingMsg.innerHTML = `<strong>AI (Error):</strong> <span style="color: red;">Gagal terhubung ke server backend.</span>`;
+        } finally {
+          // Aktifkan kembali tombol kirim
+          sendBtn.disabled = false;
+          sendBtn.style.opacity = '1';
+          chatInput.focus();
+        }
+      });
+
+      // Handle tombol enter
+      chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendBtn.click();
+      });
+    });
   </script>
 
 <%- include('partials/footer') %>
