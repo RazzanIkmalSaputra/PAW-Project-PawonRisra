@@ -1,11 +1,11 @@
 // services/gemini.service.js
 const { model } = require('../config/gemini');
-const { Product } = require('../models'); // Sesuaikan dengan cara import model Sequelize-mu
+const Produk = require('../models/produkModel');
 
 const generateChatResponse = async (userMessage) => {
     try {
         // Ambil data dari database sebagai sumber context AI
-        const products = await Product.findAll();
+        const products = await Produk.findAll();
         const productData = products.map(p => `- ${p.name}: Rp${p.price} (Stok: ${p.stock})`).join('\n');
 
         // System Instruction & Guardrail
