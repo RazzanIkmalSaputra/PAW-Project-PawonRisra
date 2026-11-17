@@ -5,9 +5,11 @@ const logger = require('./middlewares/logger');
 const routes = require('./routes');
 const sequelize = require('./config/database');
 const productRoutes = require('./routes/api');
+const chatRoutes = require('./routes/chat.routes')
 
 const app = express();
 app.use(productRoutes);
+app.use('/api/chat', chatRoutes);
 
 // View engine
 app.set('view engine', 'ejs');
