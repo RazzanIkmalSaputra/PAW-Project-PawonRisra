@@ -9,8 +9,8 @@ const chatRoutes = require('./routes/chat.routes');
 
 const app = express();
 
-// 1. MIDDLEWARE GLOBAL (Wajib ditaruh di paling atas sebelum routes)
-app.use(express.json()); // Membaca body request berbentuk JSON
+// 1. MIDDLEWARE GLOBAL (Wajib ditaruh di atas sebelum routes)
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(logger);
 
@@ -24,7 +24,7 @@ app.use('/api/chat', chatRoutes);
 app.use('/', routes);
 
 // 4. SINKRONISASI DATABASE
-sequelize.sync({ alter: true }) // Gunakan { force: true } jika ingin mereset tabel tiap kali restart
+sequelize.sync({ alter: true })
   .then(() => console.log('Database PostgreSQL terhubung dan tersinkronisasi.'))
   .catch(err => console.error('Gagal terhubung ke database:', err));
 
