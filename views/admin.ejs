@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin - Pawon Risra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Navbar -->
+    <nav class="bg-amber-800 text-white p-4 flex justify-between items-center shadow">
+        <div class="flex items-center gap-8">
+            <h1 class="text-xl font-bold">Admin Pawon Risra</h1>
+            <div class="hidden md:flex gap-4">
+                <a href="/admin/dashboard" class="px-3 py-1 rounded <%= action === 'dashboard' || action === 'tambah' || action === 'edit' ? 'bg-amber-700 font-bold' : 'hover:bg-amber-700' %>">📦 Produk</a>
+                <a href="/admin/pesanan" class="px-3 py-1 rounded <%= action === 'pesanan' ? 'bg-amber-700 font-bold' : 'hover:bg-amber-700' %>">🛒 Pesanan Masuk</a>
+            </div>
+        </div>
+        <a href="/admin/logout" class="bg-red-500 px-4 py-2 rounded hover:bg-red-600 text-sm font-bold">Logout</a>
+    </nav>
+
+    <!-- KONTEN PRODUK (Sama seperti sebelumnya) -->
+    <% if (action === 'dashboard') { %>
+        <div class="max-w-6xl mx-auto mt-8 p-6 bg-white rounded shadow-lg">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Manajemen Produk</h2>
+                <a href="/admin/tambah" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 font-bold shadow">+ Tambah Produk</a>
+            </div>
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-amber-100 text-amber-900 border-b-2 border-amber-300">
+                        <th class="p-3">Gambar</th>
+                        <th class="p-3">Nama Produk</th>
+                        <th class="p-3">Harga</th>
+                        <th class="p-3">Stok</th>
+                        <th class="p-3">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% produk.forEach(p => { %>
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="p-3">
+                            <% if(p.gambar) { %> <img src="<%= p.gambar %>" class="w-16 h-16 object-cover rounded shadow-sm"> <% } else { %> <span class="text-gray-400 italic text-sm">Tidak ada</span> <% } %>
+                        </td>
+                        <td class="p-3 font-semibold text-gray-800"><%= p.nama %></td>
+                        <td class="p-3 text-gray-600">Rp <%= p.harga.toLocaleString('id-ID') %></td>
+                        <td class="p-3">
+                            <span class="px-2 py-1 rounded text-xs font-bold text-white <%= p.status_stok === 'Tersedia' ? 'bg-green-500' : 'bg-red-500' %>"><%= p.status_stok %></span>
+                        </td>
+                        <td class="p-3">
+                            <a href="/admin/edit/<%= p.id %>" class="text-blue-600 hover:underline mr-3 font-medium">Edit</a>
+                            <a href="/admin/hapus/<%= p.id %>" onclick="return confirm('Hapus <%= p.nama %>?')" class="text-red-600 hover:underline font-medium">Hapus</a>
+                        </td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+
+    <% } else if (action === 'tambah' || action === 'edit') { %>
+        <!-- FORM TAMBAH/EDIT PRODUK (Biarkan utuh seperti file Anda sebelumnya, bagian ini saya persingkat di sini agar muat) -->
+        <div class="max-w-2xl mx-auto mt-8 bg-white p-8 rounded shadow-lg">
+            <h2 class="text-2xl font-bold mb-6 text-amber-900 border-b pb-2"><%= action === 'tambah' ? 'Tambah Produk Baru' : 'Edit Produk' %></h2>
+            <form action="/admin/<%= action %><%= action === 'edit' ? '/' + product.id : '' %>" method="POST" enctype="multipart/form-data">
+                <div class="mb-4"><label class="font-bold">Nama Produk</label><input type="text" name="nama" value="<%= action === 'edit' ? product.nama : '' %>" class="w-full border p-2 rounded" required></div>
+                <div class="mb-4"><label class="font-bold">Kategori</label><input type="text" name="kategori" value="<%= action === 'edit' ? product.kategori : '' %>" class="w-full border p-2 rounded" required></div>
+                <div class="mb-4"><label class="font-bold">Harga</label><input type="number" name="harga" value="<%= action === 'edit' ? product.harga : '' %>" class="w-full border p-2 rounded" required></div>
+                <div class="mb-4"><label class="font-bold">Keunggulan</label><textarea name="keunggulan" class="w-full border p-2 rounded" rows="3"><%= action === 'edit' ? product.keunggulan : '' %></textarea></div>
+                <div class="mb-4">
+                    <label class="font-bold">Status Stok</label>
+                    <select name="status_stok" class="w-full border p-2 rounded">
+                        <option value="Tersedia" <%= action === 'edit' && product.status_stok === 'Tersedia' ? 'selected' : '' %>>Tersedia</option>
+                        <option value="Habis" <%= action === 'edit' && product.status_stok === 'Habis' ? 'selected' : '' %>>Habis</option>
+                    </select>
+                </div>
+                <div class="mb-8"><label class="font-bold">Upload Gambar</label><input type="file" name="gambar" class="w-full border p-2 rounded" accept="image/*"></div>
+                <div class="flex gap-4">
+                    <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded font-bold shadow">Simpan</button>
+                    <a href="/admin/dashboard" class="bg-gray-400 text-white px-6 py-2 rounded font-bold shadow">Batal</a>
+                </div>
+            </form>
+        </div>
+
+    <!-- ================= BAGIAN PESANAN (BARU) ================= -->
+    <% } else if (action === 'pesanan') { %>
+        <div class="max-w-6xl mx-auto mt-8 p-6 bg-white rounded shadow-lg">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Rekap Pesanan Masuk</h2>
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-indigo-100 text-indigo-900 border-b-2 border-indigo-300">
+                        <th class="p-3 w-1/4">Tgl & Nama</th>
+                        <th class="p-3 w-1/3">Detail Pesanan</th>
+                        <th class="p-3">Total Harga</th>
+                        <th class="p-3">Status</th>
+                        <th class="p-3">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% pesanan.forEach(o => { %>
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="p-3">
+                            <p class="font-bold text-gray-900"><%= o.nama_pelanggan %></p>
+                            <p class="text-xs text-gray-500"><%= new Date(o.createdAt).toLocaleString('id-ID') %></p>
+                            <p class="text-sm text-gray-600 mt-1 line-clamp-2" title="<%= o.alamat %>">📍 <%= o.alamat %></p>
+                        </td>
+                        <td class="p-3 text-sm text-gray-700 whitespace-pre-wrap"><%= o.detail_pesanan %></td>
+                        <td class="p-3 font-bold text-amber-900">Rp <%= o.total_harga.toLocaleString('id-ID') %></td>
+                        <td class="p-3">
+                            <span class="px-2 py-1 rounded text-xs font-bold text-white 
+                                <%= o.status_pesanan === 'Baru' ? 'bg-blue-500' : (o.status_pesanan === 'Diproses' ? 'bg-orange-500' : 'bg-green-500') %>">
+                                <%= o.status_pesanan %>
+                            </span>
+                        </td>
+                        <td class="p-3 flex flex-col gap-1">
+                            <% if (o.status_pesanan === 'Baru') { %>
+                                <a href="/admin/pesanan/<%= o.id %>/status/Diproses" class="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded hover:bg-orange-200 text-center font-bold">Proses</a>
+                            <% } else if (o.status_pesanan === 'Diproses') { %>
+                                <a href="/admin/pesanan/<%= o.id %>/status/Selesai" class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200 text-center font-bold">Selesai</a>
+                            <% } %>
+                        </td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+            <% if (pesanan.length === 0) { %>
+                <p class="text-center text-gray-500 mt-6">Belum ada pesanan masuk.</p>
+            <% } %>
+        </div>
+    <% } %>
+
+</body>
+</html>
