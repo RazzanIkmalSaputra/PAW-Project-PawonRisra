@@ -1,5 +1,5 @@
 const { model } = require('../config/gemini');
-const Produk = require('../models/produkModel');
+const Produk = require('../models/product.model');
 
 const generateChatResponse = async (userMessage) => {
     try {
