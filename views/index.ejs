@@ -1,166 +1,300 @@
 <%- include('partials/head', { judul: judul }) %>
-<body class="bg-amber-50 text-gray-900 font-sans antialiased">
+<body class="bg-gray-50 text-gray-900 font-sans antialiased relative">
 
-  <header class="max-w-5xl mx-auto px-6 py-6 flex items-center justify-between">
-    <a href="/" class="text-xl font-extrabold tracking-tight text-amber-800"><%= namaToko %></a>
-    <nav class="flex gap-5 text-sm font-semibold">
-      <a href="#produk" class="hover:underline focus-visible:underline">Produk</a>
-      <a href="/api/produk" class="hover:underline focus-visible:underline">API produk</a>
-      <a href="/api/status" class="hover:underline focus-visible:underline">API status</a>
-    </nav>
+  <!-- NAVBAR -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="/" class="text-2xl font-extrabold tracking-tight text-amber-800"><%= namaToko %></a>
+      <nav class="hidden md:flex gap-6 text-sm font-semibold text-gray-600">
+        <a href="#produk" class="hover:text-amber-800">Katalog</a>
+        <a href="/api/produk" class="hover:text-amber-800">REST API</a>
+        <a href="/admin/login" class="bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800">Login Admin</a>
+      </nav>
+    </div>
   </header>
 
   <main>
-    <!-- Hero / Bagian Utama -->
-    <section class="max-w-5xl mx-auto px-6 pt-10 pb-20 grid md:grid-cols-2 gap-12 items-center">
-      <div>
-        <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-[1.05] tracking-tight text-amber-900">
-          Cemilan gurih khas Pawon Risra, renyah di setiap gigitan.
+    <!-- HERO SECTION -->
+    <section class="max-w-7xl mx-auto px-6 py-12 md:py-20">
+      <div class="max-w-3xl">
+        <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-[1.1] tracking-tight text-gray-900">
+          Cemilan gurih khas <span class="text-amber-700">Pawon Risra</span>, renyah di setiap gigitan.
         </h1>
-        <p class="mt-6 text-lg max-w-md text-gray-700">
-          Keripik singkong pilihan dan kacang bawang gurih berkualitas, diolah higienis untuk menemani hari-harimu.
+        <p class="mt-6 text-lg text-gray-600">
+          Keripik singkong pilihan dan kacang bawang gurih berkualitas, diolah higienis untuk menemani hari-harimu. Silakan masukkan ke keranjang belanja.
         </p>
-        <a href="#produk"
-           class="inline-block mt-8 bg-amber-700 text-white font-semibold rounded-md px-6 py-3 hover:bg-amber-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700">
-          Lihat produk
-        </a>
-      </div>
-
-      <!-- Kotak Status API / Mockup -->
-      <div class="bg-gray-900 text-amber-100 rounded-lg p-6 font-mono text-sm shadow-lg">
-        <div class="flex items-center justify-between mb-4">
-          <span class="font-semibold">GET /api/status</span>
-          <span class="flex items-center gap-2">
-            <span id="status-dot" class="h-2.5 w-2.5 rounded-full bg-gray-500"></span>
-            <span id="status-label">Menghubungi server</span>
-          </span>
-        </div>
-        <pre id="status-output" class="whitespace-pre-wrap break-words text-amber-400 min-h-[8rem]">...</pre>
       </div>
     </section>
 
-    <!-- Produk Pawon Risra -->
-    <section id="produk" class="max-w-5xl mx-auto px-6 pb-20 scroll-mt-6">
-      <h2 class="text-3xl font-extrabold tracking-tight text-amber-900">Produk Pawon Risra</h2>
-      <p class="mt-2 text-gray-600">Data diambil langsung dari <code class="font-mono text-sm bg-amber-100 px-1 py-0.5 rounded text-amber-900">models/produkModel.js</code>.</p>
+    <!-- KATALOG PRODUK (DESAIN GRID) -->
+    <section id="produk" class="max-w-7xl mx-auto px-6 pb-24 scroll-mt-24">
+      <div class="flex justify-between items-end mb-6">
+        <h2 class="text-2xl font-extrabold text-gray-900">Semua Produk</h2>
+        <span class="text-sm text-gray-500 font-medium">Menampilkan <%= produk.length %> produk</span>
+      </div>
 
-      <ul class="mt-8 divide-y divide-amber-200 border-y border-amber-200">
+      <!-- GRID PRODUK -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         <% produk.forEach(function (p) { %>
-          <li class="py-5 flex items-start justify-between gap-6">
-            <div>
-              <h3 class="text-lg font-semibold text-gray-900"><%= p.nama %></h3>
-              <p class="text-gray-600 max-w-md"><%= p.keunggulan %></p>
-              <p class="mt-1 text-sm font-medium text-amber-800"><%= p.kategori %></p>
+          <!-- KARTU PRODUK -->
+          <div class="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 border border-gray-100 flex flex-col overflow-hidden relative group">
+            
+            <!-- GAMBAR -->
+            <div class="bg-gray-100 h-56 p-4 flex items-center justify-center overflow-hidden">
+              <% if(p.gambar) { %>
+                <img src="<%= p.gambar %>" alt="<%= p.nama %>" class="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500">
+              <% } else { %>
+                <span class="text-gray-400 text-sm font-medium">Tanpa Gambar</span>
+              <% } %>
             </div>
-            <div class="text-right shrink-0">
-              <p class="text-lg font-extrabold text-amber-900">Rp <%= p.harga.toLocaleString('id-ID') %></p>
-              <p class="text-sm text-gray-500">Stok: Tersedia</p>
+
+            <!-- DETAIL PRODUK -->
+            <div class="p-5 flex flex-col flex-grow">
+              <!-- Indikator Kategori -->
+              <div class="flex items-center gap-2 mb-3">
+                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                <span class="text-[10px] font-bold text-gray-500 tracking-widest uppercase"><%= p.kategori %></span>
+              </div>
+              
+              <h3 class="text-lg font-bold text-gray-900 leading-tight mb-2"><%= p.nama %></h3>
+              <p class="text-xs text-gray-500 line-clamp-2 mb-6 flex-grow"><%= p.keunggulan %></p>
+              
+              <!-- FOOTER CARD (Harga & Tombol) -->
+              <div class="flex items-center justify-between mt-auto">
+                <div class="flex flex-col">
+                  <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Harga</span>
+                  <span class="text-base font-extrabold text-gray-900">Rp <%= p.harga.toLocaleString('id-ID') %></span>
+                </div>
+
+                <% if (p.status_stok !== 'Habis') { %>
+                  <button data-id="<%= p.id %>" data-nama="<%= p.nama %>" data-harga="<%= p.harga %>" onclick="tambahDariTombol(this)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition shadow-md active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                    Keranjang
+                  </button>
+                <% } else { %>
+                  <button disabled class="bg-gray-200 text-gray-400 px-4 py-2 rounded-lg text-sm font-bold cursor-not-allowed border border-gray-200">
+                    Habis
+                  </button>
+                <% } %>
+              </div>
             </div>
-          </li>
+
+          </div>
         <% }); %>
-      </ul>
+      </div>
     </section>
 
-    <!-- Chat UI terintegrasi -->
-    <section class="max-w-5xl mx-auto px-6 pb-20">
-      <h2 class="text-2xl font-extrabold tracking-tight text-amber-900 mb-4">Tanya Asisten AI</h2>
-      <div class="chat-container bg-white p-4 rounded-lg shadow-md border border-amber-200">
-        <div id="chat-box" style="height: 300px; overflow-y: scroll; border: 1px solid #e5e7eb; padding: 15px; margin-bottom: 10px; border-radius: 8px; background-color: #f9fafb;">
-            <!-- Pesan akan muncul di sini -->
+    <!-- SECTION CHAT AI -->
+    <section class="max-w-7xl mx-auto px-6 pb-20">
+      <h2 class="text-2xl font-extrabold tracking-tight text-gray-900 mb-4">Tanya Asisten AI</h2>
+      <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+        <div id="chat-box" style="height: 300px; overflow-y: scroll; padding: 15px; margin-bottom: 10px; border-radius: 8px; background-color: #f9fafb;">
             <div style="margin-bottom: 8px;"><strong>AI:</strong> Halo! Ada yang ingin ditanyakan seputar produk Pawon Risra?</div>
         </div>
-        <div style="display: flex; gap: 8px;">
-            <input type="text" id="chat-input" placeholder="Tanya tentang keripik atau kacang..." class="form-control" style="flex: 1; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;" />
-            <button id="send-btn" class="btn btn-primary" style="background-color: #b45309; color: white; padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Kirim</button>
+        <div class="flex gap-2">
+            <input type="text" id="chat-input" placeholder="Tanya tentang keripik atau kacang..." class="flex-1 border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-amber-500" />
+            <button id="send-btn" class="bg-amber-700 hover:bg-amber-800 text-white font-bold py-3 px-6 rounded-lg transition">Kirim</button>
         </div>
       </div>
     </section>
-
   </main>
 
+  <!-- ==================== UI KERANJANG ==================== -->
+  
+  <!-- Tombol Melayang Keranjang -->
+  <button onclick="toggleKeranjang()" class="fixed bottom-8 right-8 bg-amber-600 hover:bg-amber-700 text-white p-4 rounded-full shadow-2xl flex items-center justify-center transition-transform hover:scale-105 z-40 group">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+    <!-- Badge Angka -->
+    <span id="keranjang-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full border-2 border-white hidden">0</span>
+  </button>
+
+  <!-- Panel Pop-up Keranjang -->
+  <div id="keranjang-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex justify-end transition-opacity">
+    <div class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col">
+      <!-- Header Panel -->
+      <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+        <h2 class="text-xl font-bold text-gray-900">Keranjang Belanja</h2>
+        <button onclick="toggleKeranjang()" class="text-gray-400 hover:text-red-500">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+      
+      <!-- List Item Keranjang -->
+      <div id="keranjang-items" class="flex-1 overflow-y-auto p-6 space-y-4">
+        <p class="text-gray-500 text-center mt-10">Keranjang masih kosong.</p>
+      </div>
+
+      <!-- Form Checkout & Total -->
+      <div class="p-6 border-t border-gray-100 bg-gray-50">
+        <div class="flex justify-between items-center mb-4">
+          <span class="text-sm font-bold text-gray-500 uppercase">Subtotal</span>
+          <span id="keranjang-total" class="text-xl font-extrabold text-amber-900">Rp 0</span>
+        </div>
+        <input type="text" id="checkout-nama" placeholder="Nama Lengkap" class="w-full border border-gray-300 p-3 rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-amber-500">
+        <textarea id="checkout-alamat" placeholder="Alamat Pengiriman" class="w-full border border-gray-300 p-3 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-amber-500" rows="2"></textarea>
+        <button onclick="prosesCheckout()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg transition">
+          Kirim Pesanan ke WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT LOGIKA -->
   <script>
-    // Logika API Status bawaan dari kodemu
-    (async function () {
-      const output = document.getElementById('status-output');
-      const label = document.getElementById('status-label');
-      const dot = document.getElementById('status-dot');
+    // --- 1. LOGIKA KERANJANG & ATRIBUT AMAN ---
+    let keranjang = [];
+
+    function tambahDariTombol(button) {
+      const id = button.getAttribute('data-id');
+      const nama = button.getAttribute('data-nama');
+      const harga = Number(button.getAttribute('data-harga'));
+      tambahKeKeranjang(id, nama, harga);
+    }
+
+    function tambahKeKeranjang(id, nama, harga) {
+      const itemAda = keranjang.find(item => item.id === id);
+      if (itemAda) {
+        itemAda.qty += 1;
+      } else {
+        keranjang.push({ id, nama, harga, qty: 1 });
+      }
+      updateKeranjangUI();
+      
+      const badge = document.getElementById('keranjang-badge');
+      badge.classList.add('scale-150');
+      setTimeout(() => badge.classList.remove('scale-150'), 200);
+    }
+
+    function hapusItem(id) {
+      keranjang = keranjang.filter(item => item.id !== id);
+      updateKeranjangUI();
+    }
+
+    function updateKeranjangUI() {
+      const container = document.getElementById('keranjang-items');
+      const totalEl = document.getElementById('keranjang-total');
+      const badge = document.getElementById('keranjang-badge');
+      
+      let totalHarga = 0;
+      let totalBarang = 0;
+      container.innerHTML = '';
+
+      if (keranjang.length === 0) {
+        container.innerHTML = '<p class="text-gray-500 text-center mt-10">Keranjang masih kosong.</p>';
+        badge.classList.add('hidden');
+      } else {
+        keranjang.forEach(item => {
+          totalHarga += item.harga * item.qty;
+          totalBarang += item.qty;
+          
+          container.innerHTML += `
+            <div class="flex justify-between items-center bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
+              <div>
+                <p class="font-bold text-gray-900">${item.nama}</p>
+                <p class="text-sm text-gray-500">${item.qty}x Rp ${item.harga.toLocaleString('id-ID')}</p>
+              </div>
+              <button onclick="hapusItem('${item.id}')" class="text-red-500 hover:bg-red-50 p-2 rounded">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+              </button>
+            </div>
+          `;
+        });
+        badge.textContent = totalBarang;
+        badge.classList.remove('hidden');
+      }
+      totalEl.textContent = 'Rp ' + totalHarga.toLocaleString('id-ID');
+    }
+
+    function toggleKeranjang() {
+      const modal = document.getElementById('keranjang-modal');
+      modal.classList.toggle('hidden');
+    }
+
+    async function prosesCheckout() {
+      if (keranjang.length === 0) return alert('Keranjang belanja masih kosong!');
+      
+      const nama = document.getElementById('checkout-nama').value.trim();
+      const alamat = document.getElementById('checkout-alamat').value.trim();
+      
+      if (!nama || !alamat) return alert('Mohon isi Nama Lengkap dan Alamat Pengiriman.');
+
+      let detailPesanan = "";
+      let totalAkhir = 0;
+
+      keranjang.forEach((item, index) => {
+        detailPesanan += `${index + 1}. ${item.nama} (${item.qty}x) = Rp ${(item.harga * item.qty).toLocaleString('id-ID')}\n`;
+        totalAkhir += item.harga * item.qty;
+      });
 
       try {
-        const res = await fetch('/api/status');
-        const data = await res.json();
-        output.textContent = JSON.stringify(data, null, 2);
-        label.textContent = 'Server berjalan';
-        dot.className = 'h-2.5 w-2.5 rounded-full bg-amber-400 motion-safe:animate-pulse';
+        await fetch('/api/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nama_pelanggan: nama,
+            alamat: alamat,
+            detail_pesanan: detailPesanan,
+            total_harga: totalAkhir
+          })
+        });
       } catch (err) {
-        output.textContent = 'Gagal menghubungi /api/status. Pastikan server masih berjalan.';
-        label.textContent = 'Tidak terhubung';
+        console.error("Gagal merekam pesanan ke database", err);
       }
-    })();
 
-    // Logika Integrasi Gemini AI
+      const nomorTujuan = "6282195426429";
+      const pesanWA = encodeURIComponent(`Halo admin Pawon Risra!\nIbu/Bapak ingin memesan camilan:\n\n📦 *DAFTAR PESANAN*:\n${detailPesanan}\n💵 *Total Subtotal*: Rp ${totalAkhir.toLocaleString('id-ID')}\n\n📝 *DATA PENGIRIMAN*:\n- Nama: ${nama}\n- Alamat: ${alamat}\n\nMohon infokan total biaya beserta ongkirnya ya. Terima kasih!`);
+      
+      window.open(`https://wa.me/${nomorTujuan}?text=${pesanWA}`, '_blank');
+
+      keranjang = [];
+      updateKeranjangUI();
+      toggleKeranjang();
+    }
+
+    // --- 2. LOGIKA AI GEMINI ---
     document.addEventListener('DOMContentLoaded', () => {
       const chatBox = document.getElementById('chat-box');
       const chatInput = document.getElementById('chat-input');
       const sendBtn = document.getElementById('send-btn');
 
-      // Fungsi untuk menambahkan pesan ke layar
       const appendMessage = (sender, text) => {
         const msgElement = document.createElement('div');
         msgElement.innerHTML = `<strong>${sender}:</strong> ${text}`;
         msgElement.style.marginBottom = '8px';
-        msgElement.style.padding = '8px';
+        msgElement.style.padding = '10px';
         msgElement.style.backgroundColor = sender === 'Kamu' ? '#fef3c7' : '#ffffff';
-        msgElement.style.borderRadius = '6px';
+        msgElement.style.borderRadius = '8px';
         msgElement.style.border = '1px solid #e5e7eb';
         chatBox.appendChild(msgElement);
-        chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll ke bawah
+        chatBox.scrollTop = chatBox.scrollHeight;
         return msgElement;
       };
 
-      // Fungsi saat tombol kirim ditekan
       sendBtn.addEventListener('click', async () => {
         const message = chatInput.value.trim();
         if (!message) return;
-
-        // Tampilkan pertanyaan user
         appendMessage('Kamu', message);
         chatInput.value = '';
         sendBtn.disabled = true;
-        sendBtn.style.opacity = '0.5';
-
-        // Tampilkan indikator loading
         const loadingMsg = appendMessage('AI', '<em>Sedang berpikir...</em>');
 
         try {
-          // Kirim request ke backend endpoint /api/chat
           const response = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message })
           });
-          
           const result = await response.json();
-          
-          // Tampilkan balasan AI
-          if (result.success) {
-            loadingMsg.innerHTML = `<strong>AI:</strong> ${result.data.reply}`;
-          } else {
-            loadingMsg.innerHTML = `<strong>AI (Error):</strong> <span style="color: red;">${result.message}</span>`;
-          }
+          loadingMsg.innerHTML = result.success 
+            ? `<strong>AI:</strong> ${result.data.reply}` 
+            : `<strong>AI (Error):</strong> <span style="color: red;">${result.message}</span>`;
         } catch (error) {
-          loadingMsg.innerHTML = `<strong>AI (Error):</strong> <span style="color: red;">Gagal terhubung ke server backend.</span>`;
+          loadingMsg.innerHTML = `<strong>AI (Error):</strong> <span style="color: red;">Gagal terhubung.</span>`;
         } finally {
-          // Aktifkan kembali tombol kirim
           sendBtn.disabled = false;
-          sendBtn.style.opacity = '1';
-          chatInput.focus();
         }
       });
-
-      // Handle tombol enter
-      chatInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendBtn.click();
-      });
+      chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendBtn.click(); });
     });
   </script>
 
